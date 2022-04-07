@@ -22,6 +22,7 @@ const controlRecipes = async function () {
     const id = window.location.hash.slice(1);
     console.log(id);
     if (!id) return;
+    console.log(recipeView);
     recipeView.renderSpinner();
 
     // loading recipe
@@ -39,3 +40,7 @@ const controlRecipes = async function () {
 ["load", "hashchange"].forEach((event) =>
   addEventListener(event, controlRecipes)
 );
+
+console.log(recipeView);
+const test = new recipeView();
+console.log(test);

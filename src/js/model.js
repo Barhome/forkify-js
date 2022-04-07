@@ -1,5 +1,4 @@
 import { async } from "regenerator-runtime";
-console.log("test");
 
 export const state = {
   recipe: {},

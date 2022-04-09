@@ -1,7 +1,6 @@
 // import icons from "../img/icons.svg"; // parcel 1
 import icons from "url:../../img/icons.svg"; // parcel 2
 import { Fraction } from "fractional";
-
 class RecipeView {
   #parentElement = document.querySelector(".recipe");
   #data;
@@ -42,7 +41,7 @@ class RecipeView {
           ${
             ing.quantity
               ? ing.description
-              : ing.description + " add desired amount"
+              : `Add desired amount of ${ing.description}`
           }
         </div>
     </li>

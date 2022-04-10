@@ -520,7 +520,6 @@ var _modelJs = require("./model.js");
 var _recipeViewJs = require("./views/recipeView.js");
 var _recipeViewJsDefault = parcelHelpers.interopDefault(_recipeViewJs);
 var _runtime = require("regenerator-runtime/runtime");
-const recipeContainer = document.querySelector(".recipe");
 // https://forkify-api.herokuapp.com/v2
 ///////////////////////////////////////
 const controlRecipes = async function() {
@@ -533,7 +532,7 @@ const controlRecipes = async function() {
         // rendering recipe
         _recipeViewJsDefault.default.render(_modelJs.state.recipe);
     } catch (err) {
-        console.log(err);
+        _recipeViewJsDefault.default.renderMessage();
     }
 };
 const init = function() {
@@ -1609,6 +1608,7 @@ const loadRecipe = async function(id) {
         };
     } catch (err) {
         console.log(`${err}: error modal failed to load recipe data`);
+        throw err;
     }
 };
 
@@ -1689,6 +1689,8 @@ var _fractional = require("fractional");
 class RecipeView {
     #parentElement = document.querySelector(".recipe");
     #data;
+    #errMessage = `We couldn't find this recipe.<br/>Please find another one.`;
+    #message = ``;
     render(data) {
         this.#data = data;
         const markup = this.#generateMarkup();
@@ -1706,6 +1708,30 @@ class RecipeView {
             </svg>
           </div>
     `;
+        this.#clear();
+        this.#parentElement.insertAdjacentHTML("afterbegin", markup);
+    }
+    renderError(message = this.#errMessage) {
+        const markup = `<div class="error">
+    <div>
+      <svg>
+        <use href="${_iconsSvgDefault.default}#icon-alert-triangle"></use>
+      </svg>
+    </div>
+    <p>${message}</p>
+  </div> `;
+        this.#clear();
+        this.#parentElement.insertAdjacentHTML("afterbegin", markup);
+    }
+    renderMessage(message = this.#message) {
+        const markup = `<div class="message">
+    <div>
+      <svg>
+        <use href="${_iconsSvgDefault.default}#icon-smile"></use>
+      </svg>
+    </div>
+    <p>${message}</p>
+  </div> `;
         this.#clear();
         this.#parentElement.insertAdjacentHTML("afterbegin", markup);
     }

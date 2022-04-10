@@ -22,5 +22,6 @@ export const loadRecipe = async function (id) {
     };
   } catch (err) {
     console.log(`${err}: error modal failed to load recipe data`);
+    throw err;
   }
 };

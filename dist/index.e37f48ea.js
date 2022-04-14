@@ -525,7 +525,9 @@ var _searchViewJsDefault = parcelHelpers.interopDefault(_searchViewJs);
 var _resaultsViewJs = require("./views/resaultsView.js");
 var _resaultsViewJsDefault = parcelHelpers.interopDefault(_resaultsViewJs);
 // activating hot module from parcel
-if (module.hot) module.hot.accept();
+// if (module.hot) {
+//   module.hot.accept();
+// }
 // https://forkify-api.herokuapp.com/v2
 ///////////////////////////////////////
 const controlRecipes = async function() {
@@ -541,7 +543,7 @@ const controlRecipes = async function() {
         _recipeViewJsDefault.default.renderError();
     }
 };
-const controlSearchResults = async function() {
+const controlSearchResaults = async function() {
     try {
         _resaultsViewJsDefault.default.renderSpinner();
         // get search query
@@ -549,16 +551,17 @@ const controlSearchResults = async function() {
         if (!query) return;
         // load search resaults
         await _modelJs.loadSearchResaults(query);
-        // Render results
-        console.log(_modelJs.state.search.results);
-        _resaultsViewJsDefault.default.render(_modelJs.state.search.results);
+        // Render resaults
+        console.log(_modelJs.state.search.resaults);
+        //resaultsView.render(model.state.search.resaults);
+        _resaultsViewJsDefault.default.render(_modelJs.getSearchResaultsPage());
     } catch (err) {
         console.log(err);
     }
 };
 const init = function() {
     _recipeViewJsDefault.default.addHandlerRender(controlRecipes);
-    _searchViewJsDefault.default.addHandlerSearch(controlSearchResults);
+    _searchViewJsDefault.default.addHandlerSearch(controlSearchResaults);
 };
 init();
 
@@ -1610,6 +1613,8 @@ parcelHelpers.export(exports, "loadRecipe", ()=>loadRecipe
 );
 parcelHelpers.export(exports, "loadSearchResaults", ()=>loadSearchResaults
 );
+parcelHelpers.export(exports, "getSearchResaultsPage", ()=>getSearchResaultsPage
+);
 //import { async } from "regenerator-runtime";
 var _regeneratorRuntime = require("regenerator-runtime");
 var _config = require("./config");
@@ -1618,7 +1623,9 @@ const state = {
     recipe: {},
     search: {
         query: "",
-        results: []
+        resaults: [],
+        page: 1,
+        resaultsPerPage: _config.RES_PER_PAGE
     }
 };
 const loadRecipe = async function(id) {
@@ -1643,7 +1650,7 @@ const loadSearchResaults = async function(query) {
     try {
         state.search.query = query;
         const data = await _helper.getJSON(`${_config.API_URL}?search=${query}`);
-        state.search.results = data.data.recipes.map((rec)=>{
+        state.search.resaults = data.data.recipes.map((rec)=>{
             return {
                 id: rec.id,
                 title: rec.title,
@@ -1655,6 +1662,12 @@ const loadSearchResaults = async function(query) {
         console.log(err);
         throw err;
     }
+};
+const getSearchResaultsPage = function(page = state.search.page) {
+    state.search.page = page;
+    const start = (page - 1) * state.search.resaultsPerPage;
+    const end = page * state.search.resaultsPerPage;
+    return state.search.resaults.slice(start, end);
 };
 
 },{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","regenerator-runtime":"dXNgZ","./config":"k5Hzs","./helper":"lVRAz"}],"gkKU3":[function(require,module,exports) {
@@ -2260,8 +2273,11 @@ parcelHelpers.export(exports, "API_URL", ()=>API_URL
 );
 parcelHelpers.export(exports, "TIMEOUT_SEC", ()=>TIMEOUT_SEC
 );
+parcelHelpers.export(exports, "RES_PER_PAGE", ()=>RES_PER_PAGE
+);
 const API_URL = "https://forkify-api.herokuapp.com/api/v2/recipes/";
 const TIMEOUT_SEC = 10;
+const RES_PER_PAGE = 10;
 
 },{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"lVRAz":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");

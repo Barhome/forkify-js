@@ -9,9 +9,9 @@ import resaultsView from "./views/resaultsView.js";
 
 // activating hot module from parcel
 
-if (module.hot) {
-  module.hot.accept();
-}
+// if (module.hot) {
+//   module.hot.accept();
+// }
 
 // https://forkify-api.herokuapp.com/v2
 
@@ -35,7 +35,7 @@ const controlRecipes = async function () {
   }
 };
 
-const controlSearchResults = async function () {
+const controlSearchResaults = async function () {
   try {
     resaultsView.renderSpinner();
     // get search query
@@ -45,9 +45,10 @@ const controlSearchResults = async function () {
     // load search resaults
     await model.loadSearchResaults(query);
 
-    // Render results
-    console.log(model.state.search.results);
-    resaultsView.render(model.state.search.results);
+    // Render resaults
+    console.log(model.state.search.resaults);
+    //resaultsView.render(model.state.search.resaults);
+    resaultsView.render(model.getSearchResaultsPage());
   } catch (err) {
     console.log(err);
   }
@@ -55,7 +56,7 @@ const controlSearchResults = async function () {
 
 const init = function () {
   recipeView.addHandlerRender(controlRecipes);
-  searchView.addHandlerSearch(controlSearchResults);
+  searchView.addHandlerSearch(controlSearchResaults);
 };
 
 init();

@@ -27,6 +27,7 @@ export const loadRecipe = async function (id) {
       cookingTime: recipe.cooking_time,
       ingredients: recipe.ingredients,
     };
+    console.log(state.recipe);
   } catch (err) {
     throw err;
   }
@@ -55,4 +56,12 @@ export const getSearchResaultsPage = function (page = state.search.page) {
   const start = (page - 1) * state.search.resaultsPerPage;
   const end = page * state.search.resaultsPerPage;
   return state.search.resaults.slice(start, end);
+};
+
+export const updateServings = function (newServings) {
+  state.recipe.ingredients.forEach((ing) => {
+    ing.quantity = (ing.quantity * newServings) / state.recipe.servings;
+    // newQW = (oldQW * newServings) / state.recipe.servings; ex: (2*8)/4
+  });
+  state.recipe.servings = newServings;
 };

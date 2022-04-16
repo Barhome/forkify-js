@@ -541,6 +541,8 @@ const controlRecipes = async function() {
         await _modelJs.loadRecipe(id);
         // rendering recipe
         _recipeViewJsDefault.default.render(_modelJs.state.recipe);
+    //test
+    //controlServings();
     } catch (err) {
         _recipeViewJsDefault.default.renderError();
     }
@@ -569,8 +571,15 @@ const controlPagination = function(goToPage) {
     // 2) Render initial pagination buttons
     _paginationViewJsDefault.default.render(_modelJs.state.search);
 };
+const controlServings = function(newServings) {
+    // update recipe servings in state
+    _modelJs.updateServings(newServings);
+    // update the recipe view with new servings
+    _recipeViewJsDefault.default.render(_modelJs.state.recipe);
+};
 const init = function() {
     _recipeViewJsDefault.default.addHandlerRender(controlRecipes);
+    _recipeViewJsDefault.default.addHandlerUpdateServings(controlServings);
     _searchViewJsDefault.default.addHandlerSearch(controlSearchResaults);
     _paginationViewJsDefault.default.addHandlerClick(controlPagination);
 };
@@ -1626,6 +1635,8 @@ parcelHelpers.export(exports, "loadSearchResaults", ()=>loadSearchResaults
 );
 parcelHelpers.export(exports, "getSearchResaultsPage", ()=>getSearchResaultsPage
 );
+parcelHelpers.export(exports, "updateServings", ()=>updateServings
+);
 //import { async } from "regenerator-runtime";
 var _regeneratorRuntime = require("regenerator-runtime");
 var _config = require("./config");
@@ -1653,6 +1664,7 @@ const loadRecipe = async function(id) {
             cookingTime: recipe.cooking_time,
             ingredients: recipe.ingredients
         };
+        console.log(state.recipe);
     } catch (err) {
         throw err;
     }
@@ -1679,6 +1691,13 @@ const getSearchResaultsPage = function(page = state.search.page) {
     const start = (page - 1) * state.search.resaultsPerPage;
     const end = page * state.search.resaultsPerPage;
     return state.search.resaults.slice(start, end);
+};
+const updateServings = function(newServings) {
+    state.recipe.ingredients.forEach((ing)=>{
+        ing.quantity = ing.quantity * newServings / state.recipe.servings;
+    // newQW = (oldQW * newServings) / state.recipe.servings; ex: (2*8)/4
+    });
+    state.recipe.servings = newServings;
 };
 
 },{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","regenerator-runtime":"dXNgZ","./config":"k5Hzs","./helper":"lVRAz"}],"gkKU3":[function(require,module,exports) {
@@ -2288,7 +2307,7 @@ parcelHelpers.export(exports, "RES_PER_PAGE", ()=>RES_PER_PAGE
 );
 const API_URL = "https://forkify-api.herokuapp.com/api/v2/recipes/";
 const TIMEOUT_SEC = 10;
-const RES_PER_PAGE = 10;
+const RES_PER_PAGE = 12;
 
 },{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"lVRAz":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
@@ -2337,6 +2356,17 @@ class RecipeView extends _viewDefault.default {
         ].forEach((event)=>addEventListener(event, handler)
         );
     }
+    addHandlerUpdateServings(handler) {
+        this._parentElement.addEventListener("click", function(e) {
+            const btn = e.target.closest(".btn--update-servings");
+            if (!btn) return;
+            const updateTo = +btn.dataset.updateTo;
+            console.log(updateTo);
+            console.log(btn);
+            if (updateTo <= 0) return;
+            handler(updateTo);
+        });
+    }
     _generateMarkupIngredient(ing) {
         return `
     <li class="recipe__ingredient">
@@ -2376,12 +2406,12 @@ class RecipeView extends _viewDefault.default {
       <span class="recipe__info-text">servings</span>
 
       <div class="recipe__info-buttons">
-        <button class="btn--tiny btn--increase-servings">
+        <button class="btn--tiny btn--update-servings" data-update-to="${this._data.servings - 1}">
           <svg>
             <use href="${_iconsSvgDefault.default}#icon-minus-circle"></use>
           </svg>
         </button>
-        <button class="btn--tiny btn--increase-servings">
+        <button class="btn--tiny btn--update-servings" data-update-to="${this._data.servings + 1}">
           <svg>
             <use href="${_iconsSvgDefault.default}#icon-plus-circle"></use>
           </svg>
@@ -2851,40 +2881,43 @@ class paginationView extends _viewDefault.default {
             handler(goToPage);
         });
     }
+    _generateMarkupButtons(currentPage, numPages) {
+        // Page 1, and there are other pages
+        if (currentPage === 1 && numPages > 1) return `<button data-goto="${currentPage + 1}" class="btn--inline pagination__btn--next">
+        <span>${currentPage + 1}</span>
+        <svg class="search__icon">
+          <use href="${_iconsSvgDefault.default}#icon-arrow-right"></use>
+        </svg>
+      </button>`;
+        // last page
+        if (currentPage === numPages && numPages > 1) return `<button data-goto="${currentPage - 1}" class="btn--inline pagination__btn--prev">
+        <svg class="search__icon">
+          <use href="${_iconsSvgDefault.default}#icon-arrow-left"></use>
+        </svg>
+        <span>${currentPage - 1}</span>
+      </button>`;
+        // other page(page in a middle of other pages)
+        if (currentPage < numPages) return `
+          <button data-goto="${currentPage - 1}" class="btn--inline pagination__btn--prev">
+          <svg class="search__icon">
+              <use href="${_iconsSvgDefault.default}#icon-arrow-left"></use>
+          </svg>
+          <span>${currentPage - 1}</span>
+          </button>
+          <button data-goto="${currentPage + 1}" class="btn--inline pagination__btn--next">
+          <span>${currentPage + 1}</span>
+          <svg class="search__icon">
+              <use href="${_iconsSvgDefault.default}#icon-arrow-right"></use>
+          </svg>
+          </button>`;
+        // page 1, and there are No other pages
+        return ``;
+    }
     _generateMarkup() {
         const currentPage = this._data.page;
         const numPages = Math.ceil(this._data.resaults.length / this._data.resaultsPerPage);
         // console.log(numPages);
-        // Page 1, and there are other pages
-        if (currentPage === 1 && numPages > 1) return `<button data-goto="${currentPage + 1}" class="btn--inline pagination__btn--next">
-      <span>${currentPage + 1}</span>
-      <svg class="search__icon">
-        <use href="${_iconsSvgDefault.default}#icon-arrow-right"></use>
-      </svg>
-    </button>`;
-        // last page
-        if (currentPage === numPages && numPages > 1) return `<button data-goto="${currentPage - 1}" class="btn--inline pagination__btn--prev">
-      <svg class="search__icon">
-        <use href="${_iconsSvgDefault.default}#icon-arrow-left"></use>
-      </svg>
-      <span>${currentPage - 1}</span>
-    </button>`;
-        // other page(page in a middle of other pages)
-        if (currentPage < numPages) return `
-        <button data-goto="${currentPage - 1}" class="btn--inline pagination__btn--prev">
-        <svg class="search__icon">
-            <use href="${_iconsSvgDefault.default}#icon-arrow-left"></use>
-        </svg>
-        <span>${currentPage - 1}</span>
-        </button>
-        <button data-goto="${currentPage + 1}" class="btn--inline pagination__btn--next">
-        <span>${currentPage + 1}</span>
-        <svg class="search__icon">
-            <use href="${_iconsSvgDefault.default}#icon-arrow-right"></use>
-        </svg>
-        </button>`;
-        // page 1, and there are No other pages
-        return ``;
+        return this._generateMarkupButtons(currentPage, numPages);
     }
 }
 exports.default = new paginationView();

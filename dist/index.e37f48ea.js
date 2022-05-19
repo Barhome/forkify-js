@@ -537,6 +537,8 @@ const controlRecipes = async function() {
         const id = window.location.hash.slice(1);
         if (!id) return;
         _recipeViewJsDefault.default.renderSpinner();
+        // update results view to mark selected search result
+        _resaultsViewJsDefault.default.update(_modelJs.getSearchResaultsPage());
         // loading recipe
         await _modelJs.loadRecipe(id);
         // rendering recipe
@@ -2766,7 +2768,8 @@ class View {
     }
     // to update the dom in place where text and attributes is only changing
     update(data) {
-        if (!data || Array.isArray(data) && data.length === 0) return this.renderError();
+        // if (!data || (Array.isArray(data) && data.length === 0))
+        //   return this.renderError();
         this._data = data;
         const newMarkup = this._generateMarkup();
         const newDom = document.createRange().createContextualFragment(newMarkup);
@@ -2871,9 +2874,10 @@ class resaultsView extends _viewDefault.default {
         return this._data.map(this._generateMarkupPreview).join("");
     }
     _generateMarkupPreview(resault) {
+        const id = window.location.hash.slice(1);
         return `
     <li class="preview">
-    <a class="preview__link" href="#${resault.id}">
+    <a class="preview__link ${resault.id == id ? "preview__link--active" : ""}" href="#${resault.id}">
     <figure class="preview__fig">
         <img src="${resault.image}" alt="Test" />
     </figure>

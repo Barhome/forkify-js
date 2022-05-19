@@ -14,8 +14,8 @@ export default class View {
 
   // to update the dom in place where text and attributes is only changing
   update(data) {
-    if (!data || (Array.isArray(data) && data.length === 0))
-      return this.renderError();
+    // if (!data || (Array.isArray(data) && data.length === 0))
+    //   return this.renderError();
     this._data = data;
     const newMarkup = this._generateMarkup();
     const newDom = document.createRange().createContextualFragment(newMarkup);

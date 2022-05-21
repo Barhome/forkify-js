@@ -45,6 +45,8 @@ export const loadSearchResaults = async function (query) {
         image: rec.image_url,
       };
     });
+    // fixing a bug as we need to reset page to avoid starting on old page at a new search occurs.
+    state.search.page = 1;
   } catch (err) {
     console.log(err);
     throw err;

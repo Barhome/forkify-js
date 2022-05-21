@@ -14,6 +14,7 @@ export default class View {
 
   // to update the dom in place where text and attributes is only changing
   update(data) {
+    // removing if condition to keep the search resaults on the view
     // if (!data || (Array.isArray(data) && data.length === 0))
     //   return this.renderError();
     this._data = data;

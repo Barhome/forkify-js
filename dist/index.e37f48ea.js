@@ -537,7 +537,7 @@ const controlRecipes = async function() {
         const id = window.location.hash.slice(1);
         if (!id) return;
         _recipeViewJsDefault.default.renderSpinner();
-        // update results view to mark selected search result
+        // update results view to mark selected search result without rerendering the resault view to avoid reloading the images which means less http requests and less work on the browser.
         _resaultsViewJsDefault.default.update(_modelJs.getSearchResaultsPage());
         // loading recipe
         await _modelJs.loadRecipe(id);
@@ -2768,6 +2768,7 @@ class View {
     }
     // to update the dom in place where text and attributes is only changing
     update(data) {
+        // removing if condition to keep the search resaults on the view
         // if (!data || (Array.isArray(data) && data.length === 0))
         //   return this.renderError();
         this._data = data;

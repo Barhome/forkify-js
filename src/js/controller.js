@@ -24,7 +24,7 @@ const controlRecipes = async function () {
     if (!id) return;
     recipeView.renderSpinner();
 
-    // update results view to mark selected search result
+    // update results view to mark selected search result without rerendering the resault view to avoid reloading the images which means less http requests and less work on the browser.
 
     resaultsView.update(model.getSearchResaultsPage());
 

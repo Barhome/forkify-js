@@ -10,6 +10,7 @@ export const state = {
     page: 1,
     resaultsPerPage: RES_PER_PAGE,
   },
+  bookmarks: [],
 };
 
 // function to change state.recipe and the controller will grab it.
@@ -27,7 +28,10 @@ export const loadRecipe = async function (id) {
       cookingTime: recipe.cooking_time,
       ingredients: recipe.ingredients,
     };
-    console.log(state.recipe);
+    //console.log(state.recipe);
+    if (state.bookmarks.some((bookmark) => bookmark.id === id))
+      state.recipe.bookmarked = true;
+    else state.recipe.bookmarked = false;
   } catch (err) {
     throw err;
   }
@@ -66,4 +70,23 @@ export const updateServings = function (newServings) {
     // newQW = (oldQW * newServings) / state.recipe.servings; ex: (2*8)/4
   });
   state.recipe.servings = newServings;
+};
+
+export const addBookmark = function (recipe) {
+  // add bookmark
+  state.bookmarks.push(recipe);
+
+  // mark current recipe as a bookmark
+
+  if (recipe.id === state.recipe.id) state.recipe.bookmarked = true;
+};
+
+export const deleteBookmark = function (id) {
+  //delete bookmark
+  const index = state.bookmarks.findIndex((el) => el.id == id);
+  state.bookmarks.splice(index, 1);
+
+  // mark current recipe as not a bookmark
+
+  if (id === state.recipe.id) state.recipe.bookmarked = false;
 };

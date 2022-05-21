@@ -6,6 +6,7 @@ import "regenerator-runtime/runtime";
 import { async } from "regenerator-runtime/runtime";
 import searchView from "./views/searchView.js";
 import resaultsView from "./views/resaultsView.js";
+import bookmarksView from "./views/bookmarksView.js";
 import paginationView from "./views/paginationView.js";
 
 // activating hot module from parcel
@@ -27,6 +28,7 @@ const controlRecipes = async function () {
     // update results view to mark selected search result without rerendering the resault view to avoid reloading the images which means less http requests and less work on the browser.
 
     resaultsView.update(model.getSearchResaultsPage());
+    bookmarksView.update(model.state.bookmarks);
 
     // loading recipe
 
@@ -84,9 +86,23 @@ const controlServings = function (newServings) {
   // recipeView.render(model.state.recipe);
   recipeView.update(model.state.recipe);
 };
+
+const controlAddBookmark = function () {
+  // add/remove bookmark
+  if (!model.state.recipe.bookmarked) model.addBookmark(model.state.recipe);
+  else model.deleteBookmark(model.state.recipe.id);
+  //console.log(model.state.recipe);
+
+  //update recipe view
+  recipeView.update(model.state.recipe);
+
+  // render bookmarks
+  bookmarksView.render(model.state.bookmarks);
+};
 const init = function () {
   recipeView.addHandlerRender(controlRecipes);
   recipeView.addHandlerUpdateServings(controlServings);
+  recipeView.addHandlerAddBookmark(controlAddBookmark);
   searchView.addHandlerSearch(controlSearchResaults);
   paginationView.addHandlerClick(controlPagination);
 };

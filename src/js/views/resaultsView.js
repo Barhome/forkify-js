@@ -9,7 +9,7 @@ class ResaultsView extends View {
 
   _generateMarkup() {
     return this._data
-      .map((resault) => previewView.render(resault, false))
+      .map((bookmark) => previewView.render(bookmark, false))
       .join("");
   }
 }

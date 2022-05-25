@@ -28,6 +28,8 @@ const controlRecipes = async function () {
     // update results view to mark selected search result without rerendering the resault view to avoid reloading the images which means less http requests and less work on the browser.
 
     resaultsView.update(model.getSearchResaultsPage());
+
+    // updating bookmarks view
     bookmarksView.update(model.state.bookmarks);
 
     // loading recipe
@@ -37,10 +39,10 @@ const controlRecipes = async function () {
     // rendering recipe
 
     recipeView.render(model.state.recipe);
-    //test
-    //controlServings();
+    console.log(model.state.recipe);
   } catch (err) {
     recipeView.renderError();
+    console.error(err);
   }
 };
 
@@ -99,7 +101,13 @@ const controlAddBookmark = function () {
   // render bookmarks
   bookmarksView.render(model.state.bookmarks);
 };
+
+const controlBookmarks = function () {
+  bookmarksView.render(model.state.bookmarks);
+};
+
 const init = function () {
+  bookmarksView.addHandlerRender(controlBookmarks);
   recipeView.addHandlerRender(controlRecipes);
   recipeView.addHandlerUpdateServings(controlServings);
   recipeView.addHandlerAddBookmark(controlAddBookmark);

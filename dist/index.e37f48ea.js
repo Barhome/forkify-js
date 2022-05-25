@@ -541,15 +541,16 @@ const controlRecipes = async function() {
         _recipeViewJsDefault.default.renderSpinner();
         // update results view to mark selected search result without rerendering the resault view to avoid reloading the images which means less http requests and less work on the browser.
         _resaultsViewJsDefault.default.update(_modelJs.getSearchResaultsPage());
+        // updating bookmarks view
         _bookmarksViewJsDefault.default.update(_modelJs.state.bookmarks);
         // loading recipe
         await _modelJs.loadRecipe(id);
         // rendering recipe
         _recipeViewJsDefault.default.render(_modelJs.state.recipe);
-    //test
-    //controlServings();
+        console.log(_modelJs.state.recipe);
     } catch (err) {
         _recipeViewJsDefault.default.renderError();
+        console.error(err);
     }
 };
 const controlSearchResaults = async function() {
@@ -593,7 +594,11 @@ const controlAddBookmark = function() {
     // render bookmarks
     _bookmarksViewJsDefault.default.render(_modelJs.state.bookmarks);
 };
+const controlBookmarks = function() {
+    _bookmarksViewJsDefault.default.render(_modelJs.state.bookmarks);
+};
 const init = function() {
+    _bookmarksViewJsDefault.default.addHandlerRender(controlBookmarks);
     _recipeViewJsDefault.default.addHandlerRender(controlRecipes);
     _recipeViewJsDefault.default.addHandlerUpdateServings(controlServings);
     _recipeViewJsDefault.default.addHandlerAddBookmark(controlAddBookmark);
@@ -1726,11 +1731,16 @@ const updateServings = function(newServings) {
     });
     state.recipe.servings = newServings;
 };
+const persistBookmarks = function() {
+    localStorage.setItem("bookmarks", JSON.stringify(state.bookmarks));
+};
 const addBookmark = function(recipe) {
     // add bookmark
     state.bookmarks.push(recipe);
     // mark current recipe as a bookmark
-    if (recipe.id === state.recipe.id) state.recipe.bookmarked = true;
+    //if (recipe.id === state.recipe.id)
+    state.recipe.bookmarked = true;
+    persistBookmarks();
 };
 const deleteBookmark = function(id) {
     //delete bookmark
@@ -1739,7 +1749,16 @@ const deleteBookmark = function(id) {
     state.bookmarks.splice(index, 1);
     // mark current recipe as not a bookmark
     if (id === state.recipe.id) state.recipe.bookmarked = false;
+    persistBookmarks();
 };
+const init = function() {
+    const storage = localStorage.getItem("bookmarks");
+    if (storage) state.bookmarks = JSON.parse(storage);
+};
+init();
+const clearBookmarks = function() {
+    localStorage.clear("bookmarks");
+}; //clearBookmarks();
 
 },{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","regenerator-runtime":"dXNgZ","./config":"k5Hzs","./helper":"lVRAz"}],"gkKU3":[function(require,module,exports) {
 exports.interopDefault = function(a) {
@@ -2916,7 +2935,7 @@ class ResaultsView extends _viewDefault.default {
     _errMessage = `No recipes found for your query! Please try again`;
     _message = ``;
     _generateMarkup() {
-        return this._data.map((resault)=>_previewViewDefault.default.render(resault, false)
+        return this._data.map((bookmark)=>_previewViewDefault.default.render(bookmark, false)
         ).join("");
     }
 }
@@ -3024,6 +3043,9 @@ class BookmarksView extends _viewDefault.default {
     _parentElement = document.querySelector(".bookmarks__list");
     _errMessage = `No bookmarks yet. Find a nice recipe and bookmark it!`;
     _message = ``;
+    addHandlerRender(handler) {
+        window.addEventListener("load", handler);
+    }
     _generateMarkup() {
         return this._data.map((bookmark)=>_previewViewDefault.default.render(bookmark, false)
         ).join("");
@@ -3031,6 +3053,6 @@ class BookmarksView extends _viewDefault.default {
 }
 exports.default = new BookmarksView();
 
-},{"./View":"5cUXS","url:../../img/icons.svg":"loVOp","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./previewView":"1FDQ6"}]},["ddCAb","aenu9"], "aenu9", "parcelRequire3a11")
+},{"./View":"5cUXS","./previewView":"1FDQ6","url:../../img/icons.svg":"loVOp","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}]},["ddCAb","aenu9"], "aenu9", "parcelRequire3a11")
 
 //# sourceMappingURL=index.e37f48ea.js.map

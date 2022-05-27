@@ -3,6 +3,17 @@ import icons from "url:../../img/icons.svg"; // parcel 2
 export default class View {
   _data;
 
+  // Using jsdoc (https://jsdoc.app/) to write documentation about the code
+
+  /**
+   * Render the received object to the DOM.(quick description of render function)
+   * @param {Object|Object[]} data The data to be rendered. (e.g. recipe)(quick description of data parameter)
+   * @param {boolean} [render=true] If false, create markup string instead of rendering to the DOM.(quick description of render parameter)
+   * @returns {undefined|string} A markup string is returned if render=false
+   * @this {object} View instance (quick description of this keyword)
+   * @author Barhome
+   * @todo write what todo description to remind you what implementations you need to do next.
+   */
   render(data, render = true) {
     if (!data || (Array.isArray(data) && data.length === 0))
       return this.renderError();

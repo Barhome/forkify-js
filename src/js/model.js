@@ -31,7 +31,7 @@ const createRecipeObject = function (data) {
 // function to change state.recipe and the controller will grab it.
 export const loadRecipe = async function (id) {
   try {
-    data = await AJAX(`${API_URL}${id}?key=${KEY}`);
+    const data = await AJAX(`${API_URL}${id}?key=${KEY}`);
     console.log(data);
     state.recipe = createRecipeObject(data);
     //console.log(state.recipe);

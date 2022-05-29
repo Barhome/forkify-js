@@ -32,7 +32,7 @@ const createRecipeObject = function (data) {
 export const loadRecipe = async function (id) {
   try {
     const data = await AJAX(`${API_URL}${id}?key=${KEY}`);
-    console.log(data);
+    //console.log(data);
     state.recipe = createRecipeObject(data);
     //console.log(state.recipe);
     if (state.bookmarks.some((bookmark) => bookmark.id === id))
@@ -59,7 +59,7 @@ export const loadSearchResaults = async function (query) {
     // fixing a bug as we need to reset page to avoid starting on old page at a new search occurs.
     state.search.page = 1;
   } catch (err) {
-    console.log(err);
+    //console.log(err);
     throw err;
   }
 };
@@ -107,7 +107,7 @@ export const deleteBookmark = function (id) {
 
 export const uploadRecipe = async function (newRecipe) {
   try {
-    console.log(Object.entries(newRecipe));
+    //console.log(Object.entries(newRecipe));
     const ingredients = Object.entries(newRecipe)
       .filter((entry) => entry[0].startsWith("ingredient") && entry[1] !== "")
       .map((ing) => {
@@ -119,7 +119,7 @@ export const uploadRecipe = async function (newRecipe) {
         const [quantity, unit, description] = ingArr;
         return { quantity: quantity ? +quantity : null, unit, description };
       });
-    console.log(ingredients);
+    //console.log(ingredients);
     const recipe = {
       title: newRecipe.title,
       source_url: newRecipe.sourceUrl,

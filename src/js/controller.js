@@ -31,12 +31,17 @@ const controlRecipes = async function () {
 
     resaultsView.update(model.getSearchResaultsPage());
 
+    console.log("test search resaults");
     // updating bookmarks view
     bookmarksView.update(model.state.bookmarks);
 
-    // loading recipe
+    console.log("test bookmarks");
 
+    // loading recipe
+    console.log(id);
     await model.loadRecipe(id);
+
+    console.log("test load recipe");
 
     // rendering recipe
 
@@ -59,7 +64,7 @@ const controlSearchResaults = async function () {
     await model.loadSearchResaults(query);
 
     // 3) Render resaults
-    console.log(model.state.search.resaults);
+    //console.log(model.state.search.resaults);
     //resaultsView.render(model.state.search.resaults);
     resaultsView.render(model.getSearchResaultsPage());
 
